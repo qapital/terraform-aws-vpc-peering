@@ -23,8 +23,8 @@ locals {
   peer_rts_ids = length(var.peer_subnets_ids) == 0 ? local.peer_rts_ids_new : data.aws_route_table.peer_subnet_rts[*].route_table_id
 
   // Destination cidrs for this are in peer and vice versa
-  this_dest_cidrs = length(var.peer_subnets_ids) == 0 ? tolist(data.aws_vpc.peer_vpc.cidr_block) : tolist(data.aws_subnet.peer[*].cidr_block)
-  peer_dest_cidrs = length(var.this_subnets_ids) == 0 ? tolist(data.aws_vpc.this_vpc.cidr_block) : tolist(data.aws_subnet.this[*].cidr_block)
+  this_dest_cidrs = length(var.peer_subnets_ids) == 0 ? toset([data.aws_vpc.peer_vpc.cidr_block]) : toset(data.aws_subnet.peer[*].cidr_block)
+  peer_dest_cidrs = length(var.this_subnets_ids) == 0 ? toset([data.aws_vpc.this_vpc.cidr_block]) : toset(data.aws_subnet.this[*].cidr_block)
 
   // In each route table there should be 1 route for each subnet, so combining the two sets
   this_routes = [
